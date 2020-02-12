@@ -31,7 +31,10 @@ public class CharacterControl : MonoBehaviour
 
     public void Move()
     {
+        
         if (isDash) {
+
+            GetComponent<Animator>().SetBool("isMoving", false);
             if (Time.time - dashTime < 0.1) //si le dash n'est pas fini, accélération et blocage des directions
             {
                 rigidBody.velocity = direction.normalized * speed * 4;
@@ -48,33 +51,51 @@ public class CharacterControl : MonoBehaviour
 
     private void GetInput()
     {
+
         if (!isDash) //seulement si on ne dash pas
         {
+            bool isMoving = false;
             //inputs directionnels
             direction = Vector2.zero;
             if (Input.GetKey(KeyCode.Z))
             {
                 direction += Vector2.up;
+                GetComponent<Animator>().SetInteger("direction", 3);
+                isMoving = true;
             }
 
             if (Input.GetKey(KeyCode.Q))
             {
                 direction += Vector2.left;
+                GetComponent<Animator>().SetInteger("direction", 2);
+                isMoving = true;
             }
 
             if (Input.GetKey(KeyCode.S))
             {
                 direction += Vector2.down;
+                GetComponent<Animator>().SetInteger("direction", 1);
+                isMoving = true;
             }
 
             if (Input.GetKey(KeyCode.D))
             {
                 direction += Vector2.right;
+                GetComponent<Animator>().SetInteger("direction", 4);
+                isMoving = true;
             }
             if (Input.GetKey(KeyCode.C) && Time.time-dashTime > dashCoolDown) //on vérifie que le cooldown est terminé
             {
                 isDash = true;
                 dashTime = Time.time;
+                isMoving = true;
+            }
+            if (isMoving)
+            {
+                GetComponent<Animator>().SetBool("isMoving", true);
+            } else
+            {
+                GetComponent<Animator>().SetBool("isMoving", false);
             }
         }
 
