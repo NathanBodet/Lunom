@@ -12,7 +12,7 @@ public class CharacterControl : MonoBehaviour
     float dashTime; //temps écoulé depuis le début du dernier dash
     float dashCoolDown = 0.5f; //cooldown entre chaque début de dash(et non pas entre chaque dash)
 
-    public Rigidbody2D rigidBody;
+    Rigidbody2D rigidBody;
 
 
     // Start is called before the first frame update
