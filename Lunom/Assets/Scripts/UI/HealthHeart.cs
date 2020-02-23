@@ -12,6 +12,7 @@ public class HealthHeart : MonoBehaviour
     private void Start()
     {
         player = GameObject.Find("Lunom").GetComponent<Lunom>();
+        transform.SetParent(GameObject.Find("Canvas").transform);
     }
 
     // Update is called once per frame
@@ -25,5 +26,12 @@ public class HealthHeart : MonoBehaviour
             GetComponent<Image>().enabled = true;
         }
         
+    }
+
+    public void SetLevel(int level)
+    {
+        healthLevel = level;
+        Vector2 healthPos = new Vector2(-30 + 60 * level, 400);
+        GetComponent<RectTransform>().anchoredPosition = healthPos;
     }
 }
