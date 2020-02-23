@@ -5,12 +5,16 @@ using UnityEngine;
 public class CharacterControl : MonoBehaviour
 {
     
-    protected Vector2 direction; //direction du personnage en mouvement
+    public Vector2 direction; //direction du personnage en mouvement
     public float speed; //vitesse du personnage (à priori fixe)
 
     public bool isDash; //est en train de dasher?
     float dashTime; //temps écoulé depuis le début du dernier dash
     float dashCoolDown = 0.5f; //cooldown entre chaque début de dash(et non pas entre chaque dash)
+    int dashSpriteLevel; //pour savoir si on doit afficher un nouveau sprite de dash
+    Sprite spriteDash;
+    public GameObject prefabDash;
+
 
     Rigidbody2D rigidBody;
 
@@ -33,10 +37,27 @@ public class CharacterControl : MonoBehaviour
     {
         
         if (isDash) {
-
-            GetComponent<Animator>().SetBool("isMoving", false);
+            
             if (Time.time - dashTime < 0.1) //si le dash n'est pas fini, accélération et blocage des directions
             {
+                if(Time.time - dashTime > (float)dashSpriteLevel / 100)//affichage d'un nouveau sprite de dash
+                {
+                    GameObject objectSpriteDash = Instantiate(prefabDash,transform,true);
+                    //position du sprite : avance sur z au fur et a mesure
+                    objectSpriteDash.transform.parent = null;
+                    objectSpriteDash.transform.position = transform.position;
+                    Vector3 dashSpritePosTemp = new Vector3(transform.position.x, transform.position.y, 12 - dashSpriteLevel);
+                    objectSpriteDash.transform.position = dashSpritePosTemp;
+                    //couleur du sprite : de plus en plus clair
+                    SpriteRenderer sprite = objectSpriteDash.GetComponent<SpriteRenderer>();
+                    float m_Red = sprite.color.g - 0.1f*(10-dashSpriteLevel);
+                    float m_Green = sprite.color.g - 0.1f * (10 - dashSpriteLevel);
+                    float m_Blue = sprite.color.g;// - 0.1f * (10 - dashSpriteLevel);
+                    objectSpriteDash.GetComponent<SpriteRenderer>().color = new Color(m_Red, m_Green, m_Blue);
+
+                    objectSpriteDash.GetComponent<SpriteRenderer>().sprite = spriteDash;
+                    dashSpriteLevel+=1;
+                }
                 rigidBody.velocity = direction.normalized * speed * 4;
             } else // sinon fin du dash et libération des mouvements
             {
@@ -86,9 +107,11 @@ public class CharacterControl : MonoBehaviour
             }
             if (Input.GetKey(KeyCode.C) && Time.time-dashTime > dashCoolDown) //on vérifie que le cooldown est terminé
             {
+                spriteDash = GetComponent<SpriteRenderer>().sprite;
                 isDash = true;
                 dashTime = Time.time;
                 isMoving = true;
+                dashSpriteLevel = 0;
             }
             if (isMoving)
             {

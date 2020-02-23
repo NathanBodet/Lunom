@@ -49,8 +49,8 @@ public class Lunom : MonoBehaviour
     {
         
         for(int i = 0; i< healthUp; i++)
-        {
-            GameObject healthTemp = Instantiate(healthpref);
+        { 
+            GameObject healthTemp = Instantiate(healthpref,this.transform,true);
             healthTemp.GetComponent<HealthHeart>().SetLevel(maxHealth + i + 1);
         }
         maxHealth += healthUp;

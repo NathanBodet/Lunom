@@ -31,7 +31,7 @@ public class HealthHeart : MonoBehaviour
     public void SetLevel(int level)
     {
         healthLevel = level;
-        Vector2 healthPos = new Vector2(-30 + 60 * level, 400);
+        Vector2 healthPos = new Vector2(5 + 30 * level, 400);
         GetComponent<RectTransform>().anchoredPosition = healthPos;
     }
 }
