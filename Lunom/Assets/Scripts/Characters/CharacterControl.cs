@@ -7,6 +7,7 @@ public class CharacterControl : MonoBehaviour
     
     public Vector2 direction; //direction du personnage en mouvement
     public float speed; //vitesse du personnage (à priori fixe)
+    bool isMoving;
 
     public bool isDash; //est en train de dasher?
     float dashTime; //temps écoulé depuis le début du dernier dash
@@ -23,6 +24,7 @@ public class CharacterControl : MonoBehaviour
     void Start()
     {
         isDash = false;
+        isMoving = false;
         rigidBody = GetComponent<Rigidbody2D>();
     }
 
@@ -52,8 +54,8 @@ public class CharacterControl : MonoBehaviour
                     SpriteRenderer sprite = objectSpriteDash.GetComponent<SpriteRenderer>();
                     float m_Red = sprite.color.g - 0.1f*(10-dashSpriteLevel);
                     float m_Green = sprite.color.g - 0.1f * (10 - dashSpriteLevel);
-                    float m_Blue = sprite.color.g;// - 0.1f * (10 - dashSpriteLevel);
-                    objectSpriteDash.GetComponent<SpriteRenderer>().color = new Color(m_Red, m_Green, m_Blue);
+                    float m_Blue = sprite.color.g;
+                    objectSpriteDash.GetComponent<SpriteRenderer>().color = new Color(m_Red, m_Green, m_Blue,0.2f+0.1f*dashSpriteLevel);
 
                     objectSpriteDash.GetComponent<SpriteRenderer>().sprite = spriteDash;
                     dashSpriteLevel+=1;
@@ -75,36 +77,76 @@ public class CharacterControl : MonoBehaviour
 
         if (!isDash) //seulement si on ne dash pas
         {
-            bool isMoving = false;
+            isMoving = false;
             //inputs directionnels
-            direction = Vector2.zero;
-            if (Input.GetKey(KeyCode.Z))
+            if (Input.GetKey(KeyCode.Z) && direction.y != -1)
             {
-                direction += Vector2.up;
-                GetComponent<Animator>().SetInteger("direction", 3);
+                direction.y = 1;
                 isMoving = true;
+                if (direction.x == 0 && direction.y != -1)
+                {
+                    GetComponent<Animator>().SetInteger("direction", 3);
+                }
+                
+            } else
+            {
+                if(direction.y == 1)
+                {
+                    direction.y = 0;
+                }
             }
 
-            if (Input.GetKey(KeyCode.Q))
+            if (Input.GetKey(KeyCode.Q) && direction.x != 1)
             {
-                direction += Vector2.left;
-                GetComponent<Animator>().SetInteger("direction", 2);
+                direction.x = -1;
                 isMoving = true;
+                if (direction.y == 0 && direction.x != 1)
+                {
+                    GetComponent<Animator>().SetInteger("direction", 2);
+                }
+            }
+            else
+            {
+                if (direction.x == -1)
+                {
+                    direction.x = 0;
+                }
             }
 
-            if (Input.GetKey(KeyCode.S))
+            if (Input.GetKey(KeyCode.S) && direction.y != 1)
             {
-                direction += Vector2.down;
-                GetComponent<Animator>().SetInteger("direction", 1);
+                direction.y = -1;
                 isMoving = true;
+                if (direction.x == 0 && direction.y != 1)
+                {
+                    GetComponent<Animator>().SetInteger("direction", 1);
+                }
+            }
+            else
+            {
+                if (direction.y == -1)
+                {
+                    direction.y = 0;
+                }
             }
 
-            if (Input.GetKey(KeyCode.D))
+            if (Input.GetKey(KeyCode.D) && direction.x != -1)
             {
-                direction += Vector2.right;
-                GetComponent<Animator>().SetInteger("direction", 4);
+                direction.x = 1;
                 isMoving = true;
+                if (direction.y == 0 && direction.x != -1)
+                {
+                    GetComponent<Animator>().SetInteger("direction", 4);
+                }
             }
+            else
+            {
+                if (direction.x == 1)
+                {
+                    direction.x = 0;
+                }
+            }
+
             if (Input.GetKey(KeyCode.C) && Time.time-dashTime > dashCoolDown) //on vérifie que le cooldown est terminé
             {
                 spriteDash = GetComponent<SpriteRenderer>().sprite;
