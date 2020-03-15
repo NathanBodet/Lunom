@@ -8,6 +8,7 @@ public class CharacterControl : MonoBehaviour
     public Vector2 direction; //direction du personnage en mouvement
     public float speed; //vitesse du personnage (à priori fixe)
     bool isMoving;
+    public Sprite[] listeSpritesDash;//RightLeftUpDownTopBottom
 
     public bool isDash; //est en train de dasher?
     float dashTime; //temps écoulé depuis le début du dernier dash
@@ -64,6 +65,7 @@ public class CharacterControl : MonoBehaviour
             } else // sinon fin du dash et libération des mouvements
             {
                 isDash = false;
+                GetComponent<Animator>().SetBool("isDash", false);
                 rigidBody.velocity = direction.normalized * speed;
             }
         } else // application normale des mouvements au rigidbody
@@ -149,8 +151,46 @@ public class CharacterControl : MonoBehaviour
 
             if (Input.GetKey(KeyCode.C) && Time.time-dashTime > dashCoolDown) //on vérifie que le cooldown est terminé
             {
-                spriteDash = GetComponent<SpriteRenderer>().sprite;
+                if(direction.x == 1)
+                {
+                    if (direction.y == 1)
+                    {
+                        spriteDash = listeSpritesDash[5];
+                    }
+                    else if(direction.y == -1)
+                    {
+                        spriteDash = listeSpritesDash[7];
+                    } else
+                    {
+                        spriteDash = listeSpritesDash[0];
+                    }
+                } else if(direction.x == -1)
+                {
+                    if (direction.y == 1)
+                    {
+                        spriteDash = listeSpritesDash[6];
+                    }
+                    else if (direction.y == -1)
+                    {
+                        spriteDash = listeSpritesDash[7];
+                    }
+                    else
+                    {
+                        spriteDash = listeSpritesDash[1];
+                    }
+                } else
+                {
+                    if (direction.y == 1)
+                    {
+                        spriteDash = listeSpritesDash[2];
+                    }
+                    else if (direction.y == -1)
+                    {
+                        spriteDash = listeSpritesDash[3];
+                    }
+                }
                 isDash = true;
+                GetComponent<Animator>().SetBool("isDash", true);
                 dashTime = Time.time;
                 isMoving = true;
                 dashSpriteLevel = 0;
